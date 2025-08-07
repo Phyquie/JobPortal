@@ -39,11 +39,20 @@ export async function POST(req: NextRequest) {
             "svix-timestamp": svix_timestamp,
             "svix-signature": svix_signature,
         }) as ClerkWebhookEvent;
+        console.log("Webhook event verified:", event);
     } catch (err) {
+        console.log("Webhook verification failed:", err);
         return new NextResponse("Invalid signature" + err, { status: 400 });
     }
 
     const { id, email_addresses, first_name, last_name } = event.data;
+
+    console.log("Processing Clerk webhook event:", {
+        id,
+        email_addresses,
+        first_name,
+        last_name,
+    });
 
     try {
         await prisma.user.create({
@@ -53,6 +62,12 @@ export async function POST(req: NextRequest) {
                 firstName: first_name,
                 lastName: last_name,
             },
+        });
+        console.log("User created in database:", {
+            clerkId: id,
+            email: email_addresses[0].email_address,
+            firstName: first_name,
+            lastName: last_name,
         });
         return new NextResponse("User created", { status: 200 });
     } catch (error) {
