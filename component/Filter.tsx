@@ -1,6 +1,8 @@
 import React from 'react'
 
 const Filter = () => {
+
+
     return (
         <div className='min-h-max flex-col px-8 border-r border-white '>
 
