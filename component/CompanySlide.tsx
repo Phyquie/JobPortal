@@ -54,9 +54,17 @@ export default function LogoSlider() {
                             alt={`Logo ${index}`}
                             width={40}
                             height={30}
-                            className="brightness-75 invert-[.8] opacity-80"
+                            className="brightness-75 invert-[.8] opacity-80 hidden md:block"
+                        />
+                        <Image
+                            src={logo}
+                            alt={`Logo ${index}`}
+                            width={25}
+                            height={15}
+                            className="brightness-75 invert-[.8] opacity-80 md:hidden"
                         />
                     </div>
+
                 ))}
             </div>
         </div>

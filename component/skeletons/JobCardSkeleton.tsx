@@ -2,7 +2,7 @@ import React from 'react'
 
 const JobCardSkeleton = () => {
     return (
-        <div className='min-w-[864px] min-h-[194px] border flex py-2 border-white text-white rounded-2xl animate-pulse'>
+        <div className='min-w-[164px] md:min-w-[864px] min-h-[194px] border flex py-2 border-white text-white rounded-2xl animate-pulse'>
             <div className='flex flex-col w-full'>
                 <div className='flex px-4'>
                     {/* Left Icon */}
@@ -30,7 +30,7 @@ const JobCardSkeleton = () => {
             </div>
 
             {/* Right Button */}
-            <div className='flex min-w-[100px] flex-col justify-center px-5'>
+            <div className='hidden md:flex min-w-[100px] flex-col justify-center px-5'>
                 <div className='h-10 w-24 bg-gray-700 rounded-md'></div>
             </div>
         </div>

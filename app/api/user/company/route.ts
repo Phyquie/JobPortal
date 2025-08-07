@@ -4,7 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 import { v2 as cloudinary } from "cloudinary";
 
 
-export async function GET(request: Request) {
+export async function GET() {
     const { userId } = await auth();
 
 

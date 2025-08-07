@@ -4,10 +4,8 @@ interface User {
     id: string
     firstName: string
     lastName: string
-    clerkId: string
     email: string
     savedResumeUrl?: string
-    Job: Job[]
 }
 
 
@@ -60,6 +58,7 @@ export const userApi = createApi({
             // }),
 
         })
+
     })
 });
 

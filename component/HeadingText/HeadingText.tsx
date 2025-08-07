@@ -51,7 +51,7 @@ const AnimatedTitle = () => {
     }, [currentWord]); // <-- Re-run this animation effect whenever currentWord changes
 
     return (
-        <div className='text-6xl text-center font-extrabold text-white'>
+        <div className='text-2xl md:text-6xl text-center font-extrabold text-white'>
             <div>{staticText}{' '}</div>
             {/* Adding a key prop forces React to re-mount the span, ensuring a clean animation state */}
             <span ref={textRef} key={currentWord} style={{

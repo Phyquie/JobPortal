@@ -16,7 +16,7 @@ import React from "react"
 import { useUser } from "@clerk/nextjs"
 
 export function ApplyButton({ JobId }: { JobId: string }) {
-    const [postApplication] = usePostApplicationMutation()
+    const [postApplication, { isLoading }] = usePostApplicationMutation()
     const { user } = useUser();
     if (!user) return null; // Ensure user is authenticated
     const { data: userData } = useGetUserByIdQuery(user.id)
@@ -29,6 +29,8 @@ export function ApplyButton({ JobId }: { JobId: string }) {
 
     const handleSubmit = async () => {
         await postApplication(form)
+        alert("Application submitted successfully!")
+        setForm({ resumeUrl: "", coverLetter: "", JobId: JobId }) // Reset form after submission
     }
 
     return (
@@ -73,7 +75,7 @@ export function ApplyButton({ JobId }: { JobId: string }) {
                         <DialogClose asChild>
                             <Button variant="outline">Cancel</Button>
                         </DialogClose>
-                        <Button onClick={handleSubmit}>Apply</Button>
+                        <Button onClick={handleSubmit}>{isLoading ? "Applying..." : "Apply"}</Button>
                     </DialogFooter>
                 </DialogContent>
             </div>

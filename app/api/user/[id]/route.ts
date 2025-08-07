@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/prisma/client";
 import { auth } from "@clerk/nextjs/server";
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET() {
     const { userId } = await auth();
 
     if (!userId) {
@@ -25,7 +25,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
     }
 }
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: Request) {
     const { userId } = await auth();
     const body = await request.json();
 

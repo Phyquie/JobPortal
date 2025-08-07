@@ -1,9 +1,8 @@
 "use client";
 
-import { set, useForm } from "react-hook-form";
 import { useGetCompanyQuery } from "@/redux/slices/companySlice";
 import { useCreateJobMutation } from "@/redux/slices/featureapislice";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 // Make sure imagetoUrl accepts a File type as argument, or update its definition accordingly.
 
 
@@ -42,7 +41,7 @@ export default function CreateJobPage() {
 
   };
 
-  const { data: company, isLoading: loadingCompany } = useGetCompanyQuery({});
+  const { data: company } = useGetCompanyQuery({});
   return (
     <div className="min-h-screen bg-black flex items-center justify-center px-4 py-10">
       <div className="max-w-6xl w-full bg-[#1a1a1a] rounded-2xl overflow-hidden grid md:grid-cols-2 shadow-xl">
@@ -84,7 +83,7 @@ export default function CreateJobPage() {
                 onChange={(e) => setFormData({ ...formData, companyId: e.target.value })}
               >
                 <option value="">Select Company</option>
-                {company?.map((comp: any) => (
+                {company?.map((comp: { id: string; name: string }) => (
                   <option key={comp.id} value={comp.id}>
                     {comp.name}
                   </option>
@@ -166,7 +165,7 @@ export default function CreateJobPage() {
               className="bg-[#a989f6] hover:bg-purple-600 text-white font-semibold px-6 py-3 rounded mt-4 w-full"
               onClick={handlesubmit}
             >
-              Post Job
+              {creatingJob ? "Posting Job..." : "Post Job"}
             </button>
           </div>
         </div>

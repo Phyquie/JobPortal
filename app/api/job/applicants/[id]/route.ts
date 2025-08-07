@@ -3,9 +3,10 @@ import prisma from "@/prisma/client";
 import { auth } from "@clerk/nextjs/server";
 
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
-        const JobId = params.id;
+        const { id } = await params
+        const JobId = id;
         const { userId } = await auth();
         if (!userId) {
             return NextResponse.json({ message: "User not authenticated" }, { status: 401 });

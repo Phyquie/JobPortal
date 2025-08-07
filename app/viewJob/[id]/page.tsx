@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { ApplyButton } from "@/component/ApplyButton";
 import { useGetJobByIdQuery } from "@/redux/slices/featureapislice";

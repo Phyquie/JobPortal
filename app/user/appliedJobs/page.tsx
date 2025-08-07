@@ -4,7 +4,7 @@ import { useGetApplicationsByUserIdQuery } from '@/redux/slices/userSlice';
 import { useUser } from '@clerk/nextjs';
 import Link from 'next/link';
 
-const page = () => {
+const Page = () => {
     const { user } = useUser();
     const { data: applications, isLoading, error } = useGetApplicationsByUserIdQuery(user?.id || '');
     console.log("Applications:", applications);
@@ -16,7 +16,7 @@ const page = () => {
                     {isLoading ? (
                         <div className=' loader'></div>
                     ) : error ? (
-                        <div className='text-red-500'>Error fetching applications</div>
+                        <div className='text-gray-500 text-sm'>No applications found</div>
                     ) : applications && applications.length > 0 ? (
                         applications.map((application) => (
                             <>
@@ -41,4 +41,4 @@ const page = () => {
     )
 }
 
-export default page
+export default Page

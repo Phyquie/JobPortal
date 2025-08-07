@@ -1,14 +1,14 @@
 'use client'
 import { useGetCompanyQuery } from "@/redux/slices/companySlice"
-import { useGetAllJobsQuery, useDeleteJobByIdMutation } from "@/redux/slices/featureapislice"
+import { useGetAllJobsQuery } from "@/redux/slices/featureapislice"
 import { useEffect, useState } from "react"
 import JobCard from "@/component/JobTile"
-import JobCardSkeleton from "@/component/skeletons/JobCardSkeleton"
-const page = () => {
-    const { data: company, isLoading: loadingCompany } = useGetCompanyQuery({});
+import { useUser } from "@clerk/nextjs"
+const Page = () => {
+    const { user } = useUser();
+    const { data: company } = useGetCompanyQuery({});
     const [selectedCompany, setSelectedCompany] = useState("");
-    const { data: jobs, isLoading: jobLoading } = useGetAllJobsQuery({ companyId: selectedCompany });
-    const [deleteJob, { isLoading: isDeleting }] = useDeleteJobByIdMutation();
+    const { data: jobs, isLoading: jobLoading } = useGetAllJobsQuery({ companyId: selectedCompany, createdBy: user?.id });
 
 
     useEffect(() => {
@@ -31,7 +31,7 @@ const page = () => {
                 <div className='flex flex-col text-sm'>
                     <select className='bg-[#2a2a2a] text-white p-3 rounded-md border-none mb-4' value={selectedCompany} onChange={handleCompanyChange}>
                         <option value="">Select Company</option>
-                        {company?.map((comp: any) => (
+                        {company?.map((comp: { id: string; name: string; description: string }) => (
                             <option key={comp.id} value={comp.id}>
                                 {comp.name}
                             </option>
@@ -40,7 +40,7 @@ const page = () => {
                 </div>
                 <div className='flex flex-col justify-center items-center text-sm'>
                     {jobs && jobs.length > 0 ? (
-                        jobs.map((job: any) => (
+                        jobs.map((job: { id: string }) => (
                             <JobCard
                                 key={job.id}
                                 data={job}
@@ -65,4 +65,4 @@ const page = () => {
     )
 }
 
-export default page
+export default Page

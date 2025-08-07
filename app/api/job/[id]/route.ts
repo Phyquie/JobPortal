@@ -1,13 +1,14 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/prisma/client";
 import { auth } from "@clerk/nextjs/server";
 
-
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
+        const { id } = await params;
         const job = await prisma.job.findUnique({
-            where: { id: params.id },
+            where: { id: id },
         });
+
         const { userId } = await auth();
         if (!userId) {
             return NextResponse.json({ message: "User not authenticated" }, { status: 401 });
@@ -24,7 +25,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
     }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     const { userId } = await auth();
 
     if (!userId) {
@@ -32,8 +33,23 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
     }
 
     try {
+        const { id } = await params;
+        const jobExists = await prisma.job.findUnique({
+            where: { id: id },
+        });
+
+        if (!jobExists) {
+            return NextResponse.json({ message: "Job not found" }, { status: 404 });
+        } else if (jobExists.createdBy !== userId) {
+            return NextResponse.json({ message: "You are not authorized to delete this job" }, { status: 403 });
+        }
+
+        await prisma.application.deleteMany({
+            where: { jobId: id },
+        });
+
         const job = await prisma.job.delete({
-            where: { id: params.id, createdBy: userId },
+            where: { id: id },
         });
 
         return NextResponse.json({ message: "Job deleted successfully", data: job });

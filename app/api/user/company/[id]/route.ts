@@ -3,9 +3,10 @@ import prisma from "@/prisma/client";
 import { auth } from "@clerk/nextjs/server";
 
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
     const { userId } = await auth();
-    const companyId = params.id;
+    const { id } = await params
+    const companyId = id;
 
     if (!userId) {
         return NextResponse.json({ message: "User not authenticated" }, { status: 401 });
@@ -27,9 +28,10 @@ export async function GET(request: Request, { params }: { params: { id: string }
     }
 }
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
     const body = await request.json();
-    const jobId = params.id;
+    const { id } = await params
+    const jobId = id;
     if (!jobId) {
         return NextResponse.json({ message: "Job ID is required" }, { status: 400 });
     }
@@ -54,16 +56,18 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 
         return NextResponse.json({ message: "Company updated successfully", data: company });
     } catch (error) {
-        return NextResponse.json({ message: "Failed to update company" }, { status: 500 });
+        return NextResponse.json({ message: "Failed to update company", error }, { status: 500 });
     }
 }
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
     const { userId } = await auth();
-    const jobId = params.id;
+    const { id } = await params
+    const jobId = id;
 
     if (!jobId) {
         return NextResponse.json({ message: "Job ID is required" }, { status: 400 });
     }
+
 
     if (!userId) {
         return NextResponse.json({ message: "User not authenticated" }, { status: 401 });

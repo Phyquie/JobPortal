@@ -25,15 +25,15 @@ const JobLists = () => {
 
     return (
         <div className='w-full relative   flex flex-col mt-7  items-center justify-center'>
-            <div className='w-4/5  flex flex-col justify-center pb-6 text-white bg-[#1a1a1a] shadow-2xl rounded-2xl  items-center overflow-hidden '>
+            <div className='w-full  flex flex-col justify-center pb-6 text-white bg-[#1a1a1a] shadow-2xl rounded-2xl  items-center overflow-hidden '>
                 <LogoSlide />
                 <div className='flex w-full h-full justify-between items-start'>
-                    <div className='flex w-full flex-1/4 py-4'>
+                    <div className='md:flex w-full flex-1/4 py-4 hidden'>
                         <Filter />
                     </div>
                     <div className='flex flex-col w-full px-8 py-4 space-y-4'>
-                        <div className=' font-bold flex justify-between  min-w-full'><div className='text-2xl'>Latest Jobs</div><div className=''>{jobs?.length} results</div></div>
-                        <div className='min-h-screen flex flex-col '>
+                        <div className=' font-bold flex justify-between  min-w-full'><div className='text-xl md:text-2xl'>Latest Jobs</div><div className=''>{jobs?.length} results</div></div>
+                        <div className='min-h-screen flex flex-col gap-2'>
                             {jobLoading
                                 ? Array(5)
                                     .fill(0)

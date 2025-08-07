@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/prisma/client";
 import { auth } from "@clerk/nextjs/server";
-import { ApplicationStatus } from "@prisma/client";
 
 export async function POST(request: Request) {
     const { userId } = await auth();
@@ -37,7 +36,7 @@ export async function POST(request: Request) {
     }
 }
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET() {
     const { userId } = await auth();
     if (!userId) {
         return NextResponse.json({ message: "User not authenticated" }, { status: 401 });

@@ -7,8 +7,6 @@ import { useCreateClerkMutation } from '@/redux/slices/clerkSlice';
 import { useEffect } from 'react';
 import { useUser } from "@clerk/clerk-react";
 
-
-
 export default function Home() {
   const [createClerk] = useCreateClerkMutation();
   const { user } = useUser();
@@ -25,24 +23,26 @@ export default function Home() {
   }, [user, createClerk]);
 
   return (
-    <div className="flex flex-col min-h-screen text-white relative" style={{ backgroundColor: '#2f2b4e' }}>
+    <div className="flex flex-col min-h-screen text-white relative bg-[#2f2b4e]">
+      {/* Background Image */}
       <div
-        className="absolute top-0 left-0 w-full z-0"
+        className="absolute top-0 left-0 w-full z-0 h-[60vh] sm:h-[60vh] md:h-[70vh]"
         style={{
-          height: '70vh',
           backgroundImage: `url(${image22.src})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
       />
-      <div className="relative z-10">
+
+      {/* Main Content */}
+      <div className="relative z-10 px-4 sm:px-6 md:px-12 lg:px-20 pt-8 sm:pt-12">
         <Searchbar />
-        <div className="flex flex-col">
+
+        <div className="flex  flex-col mt-8 gap-6">
           <JobLists />
           <Footer />
         </div>
       </div>
     </div>
-
   );
 }
