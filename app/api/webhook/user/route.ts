@@ -1,4 +1,4 @@
-// app/api/webhooks/clerk/route.ts
+// app/api/webhook/user/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { Webhook } from 'svix';
@@ -6,7 +6,7 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET || '';
+const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SIGNING_SECRET || '';
 
 export async function POST(req: NextRequest) {
     const payload = await req.text();
