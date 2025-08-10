@@ -39,8 +39,8 @@ const Page = () => {
                     </select>
                 </div>
                 <div className='flex flex-col justify-center items-center text-sm'>
-                    {jobs && jobs.length > 0 ? (
-                        jobs.map((job: { id: string }) => (
+                    {jobs && jobs.jobs.length > 0 ? (
+                        jobs.jobs.map((job: { id: string }) => (
                             <JobCard
                                 key={job.id}
                                 data={job}

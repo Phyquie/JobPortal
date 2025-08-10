@@ -10,6 +10,14 @@ const JobCard = ({ data }: { data: any }) => {
     const userId = user?.id;
     const [deleteJob, { isLoading: isDeleting }] = useDeleteJobByIdMutation();
 
+
+    const type = {
+        full_time: "Full Time",
+        part_time: "Part Time",
+        internship: "Internship",
+        contract: "Contract"
+    }
+
     const handleDelete = async () => {
         if (user) {
             await deleteJob(data.id);
@@ -27,8 +35,8 @@ const JobCard = ({ data }: { data: any }) => {
                         <div className='text-sm md:text-md font-bold mb-2'>{data?.company?.name}</div>
                         <div className='text-md md:text-xl font-bold mb-3' >{data?.title}</div>
                         <div className='flex flex-col md:flex-row gap-2 mb-3'>
-                            <div className='bg-gray-600 text-white px-2 text-sm md:text-base rounded-2xl'>{data?.skills}</div>
-                            <div className='bg-gray-600 text-white px-2 text-sm md:text-base rounded-2xl'>{data?.type}</div>
+                            <div className='bg-gray-600 text-white px-2 text-sm md:text-base rounded-2xl font-semibold'>{data?.skills}</div>
+                            <div className='bg-gray-600 text-white px-2 text-sm md:text-base rounded-2xl font-semibold'>{type[data?.type as keyof typeof type]}</div>
                         </div>
 
                     </div>

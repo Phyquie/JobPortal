@@ -7,38 +7,24 @@ import { auth } from "@clerk/nextjs/server";
 export async function GET(request: Request) {
     try {
         const { searchParams } = new URL(request.url);
+
         const category = searchParams.get("category") as JobCategory | null;
         const type = searchParams.get("type") as JobType | null;
         const search = searchParams.get("search")?.trim() || "";
-        const page = parseInt(searchParams.get("page") || "1");
-        const limit = parseInt(searchParams.get("limit") || "10");
+        const page = parseInt(searchParams.get("page") || "1", 10);
+        const limit = parseInt(searchParams.get("limit") || "10", 10);
         const companyId = searchParams.get("companyId") || null;
         const createdBy = searchParams.get("createdBy") || null;
 
+        // Base filters
         const filters: Prisma.JobWhereInput = {
-            title: {
-                contains: search,
-                mode: "insensitive",
-            },
-            description: {
-                contains: search,
-                mode: "insensitive",
-            },
-            skills: {
-                contains: search,
-                mode: "insensitive",
-            },
             category: category || undefined,
             type: type || undefined,
             companyId: companyId || undefined,
             createdBy: createdBy || undefined,
         };
 
-        // console.log("Auth User ID:", userId);
-
-        // console.log("User ID:", userId);
-
-
+        // Search across multiple fields with OR
         if (search) {
             filters.OR = [
                 { title: { contains: search, mode: "insensitive" } },
@@ -47,31 +33,20 @@ export async function GET(request: Request) {
             ];
         }
 
-        if (category) filters.category = category;
-        if (type) filters.type = type;
-        if (companyId) filters.companyId = companyId;
-        if (createdBy) filters.createdBy = createdBy;
-
         const skip = (page - 1) * limit;
 
-        // Count total documents matching filters
+        // Count total
         const totalCount = await prisma.job.count({ where: filters });
 
-        // Get paginated results
+        // Fetch jobs
         const jobs = await prisma.job.findMany({
             where: filters,
             skip,
             take: limit,
-            orderBy: {
-                createdAt: "desc"
-            },
+            orderBy: { createdAt: "desc" },
             include: {
                 company: {
-                    select: {
-                        name: true,
-                        logoUrl: true,
-                        id: true,
-                    },
+                    select: { name: true, logoUrl: true, id: true },
                 },
             },
         });
@@ -84,10 +59,12 @@ export async function GET(request: Request) {
         });
     } catch (error) {
         console.error("Error fetching jobs:", error);
-        return NextResponse.json({ message: "Internal server error" }, { status: 500 });
+        return NextResponse.json(
+            { message: "Internal server error" },
+            { status: 500 }
+        );
     }
 }
-
 
 
 

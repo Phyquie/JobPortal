@@ -2,8 +2,9 @@ import { NextResponse } from "next/server";
 import prisma from "@/prisma/client";
 import { auth } from "@clerk/nextjs/server";
 
-export async function GET() {
-    const { userId } = await auth();
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params
+    const userId = id
 
     if (!userId) {
         return NextResponse.json({ message: "User not authenticated" }, { status: 401 });
@@ -42,6 +43,7 @@ export async function PUT(request: Request) {
                 firstName: body.firstName,
                 lastName: body.lastName,
                 email: body.email,
+                savedResumeUrl: body.savedResumeUrl,
             },
         });
 

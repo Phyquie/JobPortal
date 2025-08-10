@@ -30,13 +30,16 @@ export const featureApi = createApi({
             providesTags: ['Job'],
 
         }),
-        getAllJobs: builder.query<Job[], Record<string, string | undefined>>({
+        getAllJobs: builder.query<
+            { jobs: Job[]; page: number; limit: number; totalCount: number },
+            Record<string, string | number | undefined>
+        >({
             query: (params = {}) => {
                 const searchParams = new URLSearchParams();
 
                 for (const [key, value] of Object.entries(params)) {
                     if (value !== undefined && value !== '') {
-                        searchParams.append(key, value);
+                        searchParams.append(key, String(value));
                     }
                 }
 
@@ -45,9 +48,17 @@ export const featureApi = createApi({
                     method: 'GET',
                 };
             },
-            transformResponse: (response: { data: Job[] }) => response.data,
+            transformResponse: (response: { data: Job[]; page: number; limit: number; totalCount: number }) => {
+                return {
+                    jobs: response.data,
+                    page: response.page,
+                    limit: response.limit,
+                    totalCount: response.totalCount,
+                };
+            },
             providesTags: ['Job'],
         }),
+
 
         createJob: builder.mutation<Job, Partial<Job>>({
             query: (newJob) => ({

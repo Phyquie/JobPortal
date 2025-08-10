@@ -26,11 +26,11 @@ export default function CustomUserDropdown() {
     }, []);
 
     return (
-        <div className="relative" ref={dropdownRef}>
+        <div className="relative hidden md:block" ref={dropdownRef}>
             <img
                 src={user?.imageUrl}
                 alt="User Avatar"
-                className="h-7 w-7 rounded-full cursor-pointer"
+                className="h-7 w-7 rounded-full  cursor-pointer"
                 onClick={() => setOpen((prev) => !prev)}
             />
 
