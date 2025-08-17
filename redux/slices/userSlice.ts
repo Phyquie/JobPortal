@@ -1,4 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import { add } from 'lodash'
+import { use } from 'react'
 
 interface User {
     id: string
@@ -27,7 +29,7 @@ interface Job {
 export const userApi = createApi({
     reducerPath: 'userApi',
     baseQuery: fetchBaseQuery({ baseUrl: '/api/user' }),
-    tagTypes: ['User', 'Application'],
+    tagTypes: ['User', 'Application', 'SavedJobs'],
     endpoints: (builder) => ({
         getUserById: builder.query<User, string>({
             query: (id) => `/${id}`,
@@ -57,9 +59,34 @@ export const userApi = createApi({
             //     query: (userId) => `/hosted-jobs/${userId}`,
             // }),
 
-        })
+        }),
+        getSavedJobs: builder.query({
+            query: () => ({
+                url: '/savedjobs',
+                method: 'GET',
+            }),
+            transformResponse: (response: { data: any[] }) => response.data,
+            providesTags: ['SavedJobs'],
+        }),
+        deleteSavedJobs: builder.mutation({
+            query: (jobId) => ({
+                url: `/savedjobs`,
+                method: 'DELETE',
+                body: { jobId },
+            }),
+            invalidatesTags: ['SavedJobs'],
+        }),
+        addSavedJob: builder.mutation({
+            query: (jobId) => ({
+                url: `/savedjobs`,
+                method: 'POST',
+                body: { jobId },
+            }),
+            invalidatesTags: ['SavedJobs'],
+        }),
 
     })
+
 });
 
 
@@ -68,6 +95,10 @@ export const {
     useGetApplicationsByUserIdQuery,
     usePostApplicationMutation,
     // useGetHostedJobsQuery,
+    useAddSavedJobMutation,
+    useDeleteSavedJobsMutation,
+    useGetSavedJobsQuery,
+
 } = userApi;
 
 

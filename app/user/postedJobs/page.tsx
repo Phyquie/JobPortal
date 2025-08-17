@@ -4,6 +4,7 @@ import { useGetAllJobsQuery } from "@/redux/slices/featureapislice"
 import { useEffect, useState } from "react"
 import JobCard from "@/component/JobTile"
 import { useUser } from "@clerk/nextjs"
+import Link from "next/link"
 const Page = () => {
     const { user } = useUser();
     const { data: company } = useGetCompanyQuery({});
@@ -37,6 +38,9 @@ const Page = () => {
                             </option>
                         ))}
                     </select>
+                </div>
+                <div>
+                    <Link href="/createJob" className='bg-[#a989f6] text-base px-4 py-2 rounded-md hover:cursor-pointer'>Post Job</Link>
                 </div>
                 <div className='flex flex-col justify-center items-center text-sm'>
                     {jobs && jobs.jobs.length > 0 ? (

@@ -35,7 +35,6 @@ export default function Header({ onToggleSidebar }: { onToggleSidebar: () => voi
                     <div className="flex items-center space-x-4 mr-4">
                         <div className="text-sm md:text-lg font-bold">{user.firstName} {user.lastName}</div>
                         <CustomUserDropdown />
-
                         <img
                             src={user?.imageUrl}
                             alt="User Avatar"

@@ -3,12 +3,21 @@ import instagram from "../public/comapnylogos/instagram_glyph_gradient-logo_bran
 import Link from 'next/link'
 import { useDeleteJobByIdMutation } from '@/redux/slices/featureapislice'
 import { useUser } from '@clerk/nextjs'
+import { FaBookmark } from "react-icons/fa6";
+import { useAddSavedJobMutation, useGetSavedJobsQuery, useDeleteSavedJobsMutation } from '@/redux/slices/userSlice'
+import toast from 'react-hot-toast'
+
 
 
 const JobCard = ({ data }: { data: any }) => {
     const { user } = useUser();
     const userId = user?.id;
     const [deleteJob, { isLoading: isDeleting }] = useDeleteJobByIdMutation();
+    const [addSavedJob] = useAddSavedJobMutation();
+    const [deleteSavedJob] = useDeleteSavedJobsMutation();
+    const { data: savedJobs } = useGetSavedJobsQuery({});
+
+    const isJobSaved = Array.isArray(savedJobs) && savedJobs.some((savedJob: { job: { id: string } }) => savedJob.job.id === data.id);
 
 
     const type = {
@@ -20,7 +29,26 @@ const JobCard = ({ data }: { data: any }) => {
 
     const handleDelete = async () => {
         if (user) {
-            await deleteJob(data.id);
+            const res = await deleteJob(data.id);
+            if (res) {
+                toast.success("Job deleted successfully");
+            } else {
+                toast.error("Failed to delete job");
+            }
+        }
+    };
+
+    const handleSavedJobs = async () => {
+        if (user) {
+            if (isJobSaved) {
+                const res = await deleteSavedJob(data.id);
+                toast.success("Job removed from saved jobs");
+            } else {
+                await addSavedJob(data.id);
+                toast.success("Job saved successfully");
+            }
+        } else {
+            toast.error("Please sign in to save jobs");
         }
     };
 
@@ -44,7 +72,7 @@ const JobCard = ({ data }: { data: any }) => {
                 <div className='text-sm hidden md:block mb-2 pl-4'>{data?.description && data.description.length > 250 ? data.description.substring(0, 250) + '...' : data?.description}</div>
                 <div className='text-sm md:hidden mb-2 pl-4'>{data?.description && data.description.length > 50 ? data.description.substring(0, 50) + '...' : data?.description}</div>
             </div>
-            <div className='flex min-w-max flex-col justify-center px-5'>
+            <div className='flex min-w-max flex-col relative justify-center px-5'>
                 {userId === data?.createdBy ? (
                     <Link
                         className='bg-[#a989f6] text-white text rounded-md text-[10px] md:text-base py-2 px-4 font-bold mt-2'
@@ -65,6 +93,9 @@ const JobCard = ({ data }: { data: any }) => {
                         {isDeleting ? "Deleting..." : "Delete Job"}
                     </button>
                 )}
+                <div className='absolute top-2 right-2 text-xl' onClick={handleSavedJobs}>
+                    <FaBookmark className={isJobSaved ? " text-[#a989f6]" : ""} />
+                </div>
             </div>
         </div>
     )

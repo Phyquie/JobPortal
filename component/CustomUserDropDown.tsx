@@ -46,6 +46,9 @@ export default function CustomUserDropdown() {
                     <Link href="/user/mycompanies">
                         <p className="hover:bg-[#2f2b4e] px-4 py-2 text-sm">My Companies</p>
                     </Link>
+                    <Link href="/user/savedJobs">
+                        <p className="hover:bg-[#2f2b4e] px-4 py-2 text-sm">My Saved Jobs</p>
+                    </Link>
                     <Link href={`/user/profile/${user?.id}`}>
                         <p className="hover:bg-[#2f2b4e] px-4 py-2 text-sm">Profile</p>
                     </Link>

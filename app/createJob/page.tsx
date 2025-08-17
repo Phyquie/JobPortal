@@ -3,7 +3,7 @@
 import { useGetCompanyQuery } from "@/redux/slices/companySlice";
 import { useCreateJobMutation } from "@/redux/slices/featureapislice";
 import { useState } from "react";
-// Make sure imagetoUrl accepts a File type as argument, or update its definition accordingly.
+import toast from "react-hot-toast";
 
 
 export default function CreateJobPage() {
@@ -24,21 +24,28 @@ export default function CreateJobPage() {
 
 
 
-  const handlesubmit = () => {
-    console.log("Job Data:", formData);
-    createJob(formData);
-    setFormData({
-      title: "",
-      companyId: "",
-      location: "",
-      pin: "",
-      type: "",
-      salary: "",
-      skills: "",
-      category: "",
-      description: ""
-    });
+  const handlesubmit = async () => {
+    try {
+      const res = await createJob(formData);
+      if (res) {
+        toast.success("Job created succesfully")
+      }
+      setFormData({
+        title: "",
+        companyId: "",
+        location: "",
+        pin: "",
+        type: "",
+        salary: "",
+        skills: "",
+        category: "",
+        description: ""
+      });
 
+    } catch (error) {
+      console.error("Error creating job:", error);
+      toast.error("Something went wrong")
+    }
   };
 
   const { data: company } = useGetCompanyQuery({});

@@ -97,7 +97,14 @@ export default function Sidebar({
                     My Companies
                 </Link>
                 <Link
-                    href={`user/profile/${user?.id}`}
+                    href="/user/savedJobs"
+                    className="block text-white hover:text-blue-600"
+                    onClick={onClose}
+                >
+                    Saved Jobs
+                </Link>
+                <Link
+                    href={`/user/profile/${user?.id}`}
                     className="block text-white hover:text-blue-600"
                     onClick={onClose}
                 >
