@@ -4,6 +4,11 @@ import { useParams } from "next/navigation";
 import { ApplyButton } from "@/component/ApplyButton";
 import { useGetJobByIdQuery } from "@/redux/slices/featureapislice";
 import JobDetailSkeleton from "@/component/skeletons/JobDetailSkeleton";
+import { useGetApplicationsByUserIdQuery } from "@/redux/slices/userSlice";
+import { useUser } from "@clerk/nextjs";
+import { useCreateClerkMutation } from '@/redux/slices/clerkSlice';
+import { useEffect } from "react";
+
 
 
 
@@ -12,11 +17,21 @@ import JobDetailSkeleton from "@/component/skeletons/JobDetailSkeleton";
 
 export default function JobDetailPage() {
     const { id } = useParams();
+    const { user } = useUser();
     const { data: Job, isLoading: loading, error } = useGetJobByIdQuery(id as string, {
         skip: !id,
         refetchOnMountOrArgChange: true,
     });
-    console.log("Job Data:", Job);
+    console.log(Job)
+    const { data: applications, isLoading: loadingApps, error: appsError } = useGetApplicationsByUserIdQuery(user?.id || '');
+
+    const isApplied = applications?.some(app => app.jobId === id);
+    const [createClerk] = useCreateClerkMutation();
+    useEffect(() => {
+        if (user) {
+            createClerk(user);
+        }
+    }, [user, createClerk]);
 
     if (loading) return <JobDetailSkeleton />;
     if (error) return <div className="text-red-500 p-10">Error fetching job details</div>;
@@ -76,7 +91,7 @@ export default function JobDetailPage() {
 
                 {/* Footer Actions */}
                 <div className="mt-8 flex flex-wrap gap-4">
-                    <ApplyButton JobId={Job.id} />
+                    {isApplied?<div  className=" h-full font-semibold px-6 py-2 rounded-md border-[#444] border  text-gray-300 ">Already Applied</div>:<ApplyButton JobId={Job.id} />}
                     <button className="border border-[#444] hover:border-[#66] text-gray-300 px-6 py-2 rounded-md">
                         Save Job
                     </button>

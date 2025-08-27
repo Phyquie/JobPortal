@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { usePostApplicationMutation, useGetUserByIdQuery } from "@/redux/slices/userSlice"
-import React from "react"
+import React, { useEffect } from "react"
 import { useUser } from "@clerk/nextjs"
 
 export function ApplyButton({ JobId }: { JobId: string }) {
@@ -24,8 +24,17 @@ export function ApplyButton({ JobId }: { JobId: string }) {
     const [form, setForm] = React.useState({
         resumeUrl: "",
         coverLetter: "",
-        JobId: JobId, // This should be set to the job ID you are applying for
+        JobId: JobId,
     })
+
+    useEffect(() => {
+        if (userData) {
+            setForm((prev) => ({
+                ...prev,
+                resumeUrl: userData.savedResumeUrl || "",
+            }))
+        }
+    }, [userData])
 
     const handleSubmit = async () => {
         await postApplication(form)

@@ -3,12 +3,14 @@ import React from 'react'
 import { useGetJobApplicantsQuery } from '@/redux/slices/featureapislice'
 import { use } from 'react';
 import { useUpdateApplicantsStatusMutation } from '@/redux/slices/featureapislice';
+import DownloadApplicants from '@/component/DownloadApplicantsExcel';
 
 
 const Page = ({ params }: { params: Promise<{ jobId: string }> }) => {
     const { jobId } = use(params)
     const { data: applicants, isLoading } = useGetJobApplicantsQuery(jobId);
     const [updateStatus] = useUpdateApplicantsStatusMutation();
+    console.log(applicants)
     return (
         <div className="min-h-screen bg-black flex justify-center px-4 py-10">
             <div className='text-2xl flex rounded-xl w-full  max-w-4xl flex-col bg-[#1a1a1a] text-white px-8 py-10 shadow-lg space-y-4'>
@@ -16,6 +18,7 @@ const Page = ({ params }: { params: Promise<{ jobId: string }> }) => {
                     All Applicants
                 </div>
                 <div className='text-sm text-gray-400'>Manage your applicants</div>
+                <DownloadApplicants applicants={applicants} />
 
                 <div className='flex flex-col justify-center items-center text-sm'>
                     {/* Applicants list will be rendered here */}

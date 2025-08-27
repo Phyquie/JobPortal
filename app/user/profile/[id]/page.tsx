@@ -4,6 +4,8 @@ import { useGetUserByIdQuery } from "@/redux/slices/userSlice";
 import { use } from 'react'
 import { useUser } from "@clerk/nextjs";
 import ProfilePageSkeleton from "@/component/skeletons/ProfilePageSkeleton";
+import { useUpdateUserMutation } from "@/redux/slices/userSlice";
+import { set } from "lodash";
 
 
 
@@ -13,6 +15,7 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
   const { id } = use(params);
   const { user } = useUser();
   const { data: userData, isLoading } = useGetUserByIdQuery(id);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const [userForm, setUserForm] = useState({
     firstName: "",
@@ -20,6 +23,19 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
     email: "",
     savedResumeUrl: "",
   });
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+          const file = e.target.files?.[0];
+          if (!file) return;
+  
+          const reader = new FileReader();
+          reader.onloadend = () => {
+              setUserForm((prev) => ({ ...prev, savedResumeUrl: (reader.result as string) || "" }));
+          };
+          reader.readAsDataURL(file);
+      };
+
+  const [updateUser, isLoadingUpdate] = useUpdateUserMutation();
 
   useEffect(() => {
     if (userData) {
@@ -35,6 +51,16 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
   if (isLoading) {
     return <ProfilePageSkeleton />;
   }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+    setIsUpdating(true);
+    await updateUser({ id, ...userForm });
+    } finally {
+      setIsUpdating(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center px-4 py-6">
@@ -78,7 +104,7 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
               <div className="loader"></div>
             </div>
           ) : (
-            <form className="space-y-4 text-sm">
+            <form className="space-y-4 text-sm" onSubmit={handleSubmit}>
               <div className="flex flex-col md:flex-row gap-4">
                 <input
                   type="text"
@@ -86,6 +112,7 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
                   disabled
                   placeholder="First Name"
                   className="flex-1 p-3 rounded bg-[#2a2a2a] border-none text-white placeholder-gray-400 text-sm"
+                  onChange={(e) => setUserForm((prev) => ({ ...prev, firstName: e.target.value }))}
                 />
                 <input
                   type="text"
@@ -93,6 +120,7 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
                   disabled
                   placeholder="Last Name"
                   className="flex-1 p-3 rounded bg-[#2a2a2a] border-none text-white placeholder-gray-400 text-sm"
+                  onChange={(e) => setUserForm((prev) => ({ ...prev, lastName: e.target.value }))}
                 />
               </div>
 
@@ -102,6 +130,7 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
                 disabled
                 placeholder="Email"
                 className="w-full p-3 rounded bg-[#2a2a2a] border-none text-white placeholder-gray-400 text-sm"
+                onChange={(e) => setUserForm((prev) => ({ ...prev, email: e.target.value }))}
               />
 
               <div className="w-full p-3 rounded bg-[#2a2a2a] border-none text-gray-300 flex justify-between items-center text-sm">
@@ -124,14 +153,15 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
                 type="file"
                 accept=".pdf"
                 className="w-full text-gray-300 text-sm"
+                onChange={handleImageChange}
               />
 
-              <button
+            
+                {user && user.id && id === user.id ?    <button
                 type="submit"
                 className="bg-[#a989f6] hover:bg-purple-600 text-white font-semibold px-6 py-3 rounded mt-4 w-full text-sm"
-              >
-                {user && user.id && id === user.id ? "Update Profile" : "Nahh ! You can't update this profile"}
-              </button>
+              >{isUpdating? "Updating..." : "Update Profile"}</button> : "Nahh ! You can't update this profile"}
+
             </form>
           )}
         </div>

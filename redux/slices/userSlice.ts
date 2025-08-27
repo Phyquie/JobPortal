@@ -92,6 +92,7 @@ export const userApi = createApi({
 
 export const {
     useGetUserByIdQuery,
+    useUpdateUserMutation,
     useGetApplicationsByUserIdQuery,
     usePostApplicationMutation,
     // useGetHostedJobsQuery,
