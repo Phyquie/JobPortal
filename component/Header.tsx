@@ -23,11 +23,11 @@ export default function Header({ onToggleSidebar }: { onToggleSidebar: () => voi
                 </Link>
             </div>
 
-            <div className='flex-1 md:flex justify-center items-center hidden space-x-4 font-bold'>
-                <div>Home</div>
-                <div>About</div>
-                <div>Contact</div>
-                <div>Subscribe</div>
+            <div className='flex-1 md:flex md:align-self-center justify-center items-center hidden space-x-4 font-bold'>
+                <Link href="/">Home</Link>
+                <Link href="/">About</Link>
+                <Link href="/">Contact</Link>
+                
             </div>
 
             <div className='flex'>

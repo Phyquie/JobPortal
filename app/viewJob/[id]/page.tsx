@@ -4,10 +4,11 @@ import { useParams } from "next/navigation";
 import { ApplyButton } from "@/component/ApplyButton";
 import { useGetJobByIdQuery } from "@/redux/slices/featureapislice";
 import JobDetailSkeleton from "@/component/skeletons/JobDetailSkeleton";
-import { useGetApplicationsByUserIdQuery } from "@/redux/slices/userSlice";
+import { useGetApplicationsByUserIdQuery, useAddSavedJobMutation, useGetSavedJobsQuery, useDeleteSavedJobsMutation } from "@/redux/slices/userSlice";
 import { useUser } from "@clerk/nextjs";
 import { useCreateClerkMutation } from '@/redux/slices/clerkSlice';
 import { useEffect } from "react";
+import toast from 'react-hot-toast';
 
 
 
@@ -25,6 +26,13 @@ export default function JobDetailPage() {
     console.log(Job)
     const { data: applications, isLoading: loadingApps, error: appsError } = useGetApplicationsByUserIdQuery(user?.id || '');
 
+    // Saved jobs logic (inspired by JobTile)
+    const [addSavedJob] = useAddSavedJobMutation();
+    const [deleteSavedJob] = useDeleteSavedJobsMutation();
+    const { data: savedJobs } = useGetSavedJobsQuery({});
+
+    const isJobSaved = Array.isArray(savedJobs) && savedJobs.some((savedJob: { job: { id: string } }) => savedJob.job.id === id);
+
     const isApplied = applications?.some(app => app.jobId === id);
     const [createClerk] = useCreateClerkMutation();
     useEffect(() => {
@@ -32,6 +40,20 @@ export default function JobDetailPage() {
             createClerk(user);
         }
     }, [user, createClerk]);
+
+    const handleSavedJobs = async () => {
+        if (user) {
+            if (isJobSaved) {
+                await deleteSavedJob(id);
+                toast.success("Job removed from saved jobs");
+            } else {
+                await addSavedJob(id);
+                toast.success("Job saved successfully");
+            }
+        } else {
+            toast.error("Please sign in to save jobs");
+        }
+    };
 
     if (loading) return <JobDetailSkeleton />;
     if (error) return <div className="text-red-500 p-10">Error fetching job details</div>;
@@ -91,9 +113,16 @@ export default function JobDetailPage() {
 
                 {/* Footer Actions */}
                 <div className="mt-8 flex flex-wrap gap-4">
-                    {isApplied?<div  className=" h-full font-semibold px-6 py-2 rounded-md border-[#444] border  text-gray-300 ">Already Applied</div>:<ApplyButton JobId={Job.id} />}
-                    <button className="border border-[#444] hover:border-[#66] text-gray-300 px-6 py-2 rounded-md">
-                        Save Job
+                    {isApplied ? (
+                        <div className=" h-full font-semibold px-6 py-2 rounded-md border-[#444] border  text-gray-300 ">Already Applied</div>
+                    ) : (
+                        <ApplyButton JobId={Job.id} />
+                    )}
+                    <button
+                        className={`border border-[#444] hover:border-[#66] text-gray-300 px-6 py-2 rounded-md `}
+                        onClick={handleSavedJobs}
+                    >
+                        {isJobSaved ? 'Saved' : 'Save Job'}
                     </button>
                 </div>
             </div>

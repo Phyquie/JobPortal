@@ -8,7 +8,7 @@ export async function GET(request: Request) {
     try {
         const { searchParams } = new URL(request.url);
 
-        const category = searchParams.get("category") as JobCategory | null;
+        const categories = searchParams.get("categories") as JobCategory | null;
         const type = searchParams.get("type") as JobType | null;
         const search = searchParams.get("search")?.trim() || "";
         const page = parseInt(searchParams.get("page") || "1", 10);
@@ -18,7 +18,7 @@ export async function GET(request: Request) {
 
         // Base filters
         const filters: Prisma.JobWhereInput = {
-            category: category || undefined,
+            category: categories || undefined,
             type: type || undefined,
             companyId: companyId || undefined,
             createdBy: createdBy || undefined,

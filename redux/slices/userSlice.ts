@@ -55,6 +55,7 @@ export const userApi = createApi({
                 method: 'POST',
                 body: { ...formData },
             }),
+
             // getHostedJobs: builder.query<Job[], string>({
             //     query: (userId) => `/hosted-jobs/${userId}`,
             // }),

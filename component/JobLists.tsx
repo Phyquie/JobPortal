@@ -16,7 +16,8 @@ const JobLists = () => {
     const [page, setPage] = useState(1);
     const limit = 10;
     const [type, setType] = useState('');
-    const { data, isLoading: jobLoading, error } = useGetAllJobsQuery({ search, page, limit, type });
+    const [categories, setCategories] = useState('');
+    const { data, isLoading: jobLoading, error } = useGetAllJobsQuery({ search, page, limit, type, categories });
 
     if (error) {
         console.log('Error fetching jobs:', error)
@@ -31,10 +32,10 @@ const JobLists = () => {
                 <LogoSlide />
                 <div className='flex w-full h-full justify-between items-start'>
                     <div className='md:flex w-full flex-1/4 py-4 hidden'>
-                        <Filter onTypeChange={setType} />
+                        <Filter onTypeChange={setType} onCategoryChange={setCategories} />
                     </div>
                     <div className='flex flex-col w-full px-8 py-4 space-y-4'>
-                        <div className=' font-bold flex justify-between  min-w-full'><div className='text-xl md:text-2xl'>Latest Jobs</div><div className=''>{data?.totalCount} results</div></div>
+                        <div className=' font-bold flex justify-between  min-w-full'><div className='text-xl md:text-2xl'>Latest Jobs</div>{data?.totalCount && <div className=''>{data?.totalCount} results</div>}</div>
                         <div className='min-h-screen flex flex-col gap-2'>
                             {jobLoading
                                 ? Array(5)

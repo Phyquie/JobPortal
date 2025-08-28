@@ -135,7 +135,7 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
 
               <div className="w-full p-3 rounded bg-[#2a2a2a] border-none text-gray-300 flex justify-between items-center text-sm">
                 <span>
-                  {userForm.savedResumeUrl ? "Resume Uploaded" : "No Resume Uploaded"}
+                  {userForm.savedResumeUrl ? "Resume Already Uploaded" : "No Resume Uploaded"}
                 </span>
                 {userForm.savedResumeUrl && (
                   <a
@@ -148,13 +148,23 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
                   </a>
                 )}
               </div>
-
+             { user && user.id && id === user.id &&  <div>
               <input
+                id="resume-upload"
                 type="file"
                 accept=".pdf"
-                className="w-full text-gray-300 text-sm"
+                className="hidden"
                 onChange={handleImageChange}
+                name="resume"
               />
+              <label
+                htmlFor="resume-upload"
+                className="w-full flex items-center justify-center bg-[#2a2a2a] border border-dashed border-gray-500 rounded cursor-pointer py-3 text-gray-300 hover:bg-[#232323] transition-colors text-sm mt-2"
+              >
+                {userForm.savedResumeUrl ? "Update Resume" : "Upload Resume"}
+              </label>
+              </div>
+}
 
             
                 {user && user.id && id === user.id ?    <button

@@ -1,9 +1,16 @@
 import { NextResponse } from "next/server";
 import prisma from "@/prisma/client";
 import { auth } from "@clerk/nextjs/server";
+import { v2 as cloudinary } from "cloudinary";
+
 
 export async function POST(request: Request) {
     const { userId } = await auth();
+    cloudinary.config({
+        cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+        api_key: process.env.CLOUDINARY_API_KEY,
+        api_secret: process.env.CLOUDINARY_API_SECRET
+    });
     const body = await request.json();
     const { resumeUrl, coverLetter, JobId } = body;
     if (!userId) {
@@ -20,6 +27,15 @@ export async function POST(request: Request) {
         if (existingApplication) {
             return NextResponse.json({ message: "You have already applied for this job" }, { status: 400 });
         }
+
+        await cloudinary.uploader.upload(body.resumeUrl, { folder: "resume" })
+            .then((result) => {
+                body.resumeUrl = result.secure_url;
+            }
+            ).catch((error) => {
+                console.error("Error uploading resume:", error);
+                return NextResponse.json({ message: "Failed to upload resume" }, { status: 500 });
+            });
         const application = await prisma.application.create({
             data: {
                 jobId: JobId,

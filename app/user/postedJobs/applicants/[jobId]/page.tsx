@@ -27,8 +27,29 @@ const Page = ({ params }: { params: Promise<{ jobId: string }> }) => {
                             <div>
                                 <div className='text-lg font-bold'>{`${applicant?.user.firstName} ${applicant?.user.lastName}`}</div>
                                 <div className='text-sm text-gray-400'>{applicant?.user.email}</div>
-                                <div>Resume : {applicant?.resumeUrl}</div>
-                                <div>Cover Letter : {applicant?.coverLetter}</div>
+                                {applicant?.resumeUrl && (
+  <a 
+    href={applicant.resumeUrl} 
+    download 
+    target="_blank" 
+    rel="noopener noreferrer"
+    className="text-white underline"
+  >
+    View Resume
+  </a>
+)}
+ {applicant?.coverLetter && (
+  <a 
+    href={applicant.resumeUrl} 
+    download 
+    target="_blank" 
+    rel="noopener noreferrer"
+    className="text-blue-600 underline"
+  >
+    View Cover Letter
+  </a>
+)}
+
                             </div>
                             <div className='flex flex-col md:flex-row gap-2 md:gap-4'>
                                 {/* Add buttons for edit and delet gap-e functionality */}
