@@ -9,6 +9,9 @@ import toast from 'react-hot-toast'
 
 
 
+
+
+
 const JobCard = ({ data }: { data: any }) => {
     const { user } = useUser();
     const userId = user?.id;
@@ -19,6 +22,21 @@ const JobCard = ({ data }: { data: any }) => {
 
     const isJobSaved = Array.isArray(savedJobs) && savedJobs.some((savedJob: { job: { id: string } }) => savedJob.job.id === data.id);
 
+  const rupeeFn = (value: number): string => {
+  if (value >= 10000000) {
+    // 1 Cr and above
+    return (value / 10000000).toFixed(2).replace(/\.00$/, "") + " Cr";
+  } else if (value >= 100000) {
+    // 1 Lakh and above
+    return (value / 100000).toFixed(2).replace(/\.00$/, "") + " Lakh";
+  } else if (value >= 1000) {
+    // 1 Thousand and above
+    return (value / 1000).toFixed(2).replace(/\.00$/, "") + " K";
+  } else {
+    // less than 1000 → normal number
+    return value.toString();
+  }
+};
 
     const type = {
         full_time: "Full Time",
@@ -65,6 +83,7 @@ const JobCard = ({ data }: { data: any }) => {
                         <div className='flex flex-col md:flex-row gap-2 mb-3'>
                             <div className='bg-gray-600 text-white px-2 text-sm md:text-base rounded-2xl font-semibold'>{data?.skills}</div>
                             <div className='bg-gray-600 text-white px-2 text-sm md:text-base rounded-2xl font-semibold'>{type[data?.type as keyof typeof type]}</div>
+                            <div className='bg-gray-600 text-white px-2 text-sm md:text-base rounded-2xl font-semibold'>₹{rupeeFn(data?.salary)} Per Annum</div>
                         </div>
 
                     </div>

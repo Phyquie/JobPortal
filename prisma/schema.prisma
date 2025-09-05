@@ -19,7 +19,7 @@ model Job {
   location      String
   pin           String
   type          JobType
-  salary        String
+  salary        Int
   skills        String?
   category      JobCategory
   description   String

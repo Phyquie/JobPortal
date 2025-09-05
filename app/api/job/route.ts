@@ -15,6 +15,15 @@ export async function GET(request: Request) {
         const limit = parseInt(searchParams.get("limit") || "10", 10);
         const companyId = searchParams.get("companyId") || null;
         const createdBy = searchParams.get("createdBy") || null;
+        const minSalary = parseInt(searchParams.get("minSalary") || "0", 10);
+        const maxSalaryParam = searchParams.get("maxSalary");
+        const maxSalary = maxSalaryParam ? parseInt(maxSalaryParam, 10) : undefined;
+
+        // Salary filter
+        const salaryFilter: Prisma.IntFilter = {
+            gte: minSalary,
+            ...(maxSalary !== undefined && !isNaN(maxSalary) ? { lte: maxSalary } : {}),
+        };
 
         // Base filters
         const filters: Prisma.JobWhereInput = {
@@ -22,6 +31,7 @@ export async function GET(request: Request) {
             type: type || undefined,
             companyId: companyId || undefined,
             createdBy: createdBy || undefined,
+            salary: salaryFilter,
         };
 
         // Search across multiple fields with OR

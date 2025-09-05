@@ -88,7 +88,12 @@ export const featureApi = createApi({
                 body: data,
             }),
             invalidatesTags: ['Job'],
-        })
+        }),
+        getMaxSalary: builder.query<number, void>({
+            query: () => '/misc/getMaxSalary',
+            transformResponse: (response: { maxSalary: number }) => response.maxSalary,
+            providesTags: ['Job'],
+        }),
     }),
 });
 
@@ -99,5 +104,6 @@ export const {
     useCreateJobMutation,
     useDeleteJobByIdMutation,
     useGetJobApplicantsQuery,
-    useUpdateApplicantsStatusMutation
+    useUpdateApplicantsStatusMutation,
+    useGetMaxSalaryQuery,
 } = featureApi;

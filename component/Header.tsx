@@ -23,16 +23,11 @@ export default function Header({ onToggleSidebar }: { onToggleSidebar: () => voi
                 </Link>
             </div>
 
-            <div className='flex-1 md:flex md:align-self-center justify-center items-center hidden space-x-4 font-bold'>
-                <Link href="/">Home</Link>
-                <Link href="/">About</Link>
-                <Link href="/">Contact</Link>
-                
-            </div>
+          
 
             <div className='flex'>
                 {isSignedIn && isLoaded ? (
-                    <div className="flex items-center space-x-4 mr-4">
+                    <div className="flex items-center space-x-4 ">
                         <div className="text-sm md:text-lg font-bold">{user.firstName} {user.lastName}</div>
                         <CustomUserDropdown />
                         <img

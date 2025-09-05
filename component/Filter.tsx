@@ -1,9 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+
+import { useGetMaxSalaryQuery } from '@/redux/slices/featureapislice';
+import { max } from 'lodash';
+
+
 
 type FilterProps = {
     onTypeChange: (type: string) => void;
     onCategoryChange?: (categories: string) => void;
+    onSalaryChange?: (salary: number) => void;
 };
+
+
 
 const jobCategories = [
   { label: "Engineering", value: "engineering" },
@@ -17,9 +25,37 @@ const jobCategories = [
   { label: "Other", value: "other" },
 ];
 
-const Filter = ({ onTypeChange, onCategoryChange }: FilterProps) => {
+const Filter = ({ onTypeChange, onCategoryChange , onSalaryChange }: FilterProps) => {
+
+    const { data: maxSalary } = useGetMaxSalaryQuery();
     const [selectedType, setSelectedType] = useState<string>("");
     const [selectedCategories, setSelectedCategories] = useState<string>("");
+    const [maxValue, setMaxValue] = useState<number>();
+
+
+    const rupeeFn = (value: number): string => {
+  if (value >= 10000000) {
+    // 1 Cr and above
+    return (value / 10000000).toFixed(2).replace(/\.00$/, "") + " Cr";
+  } else if (value >= 100000) {
+    // 1 Lakh and above
+    return (value / 100000).toFixed(2).replace(/\.00$/, "") + " Lakh";
+  } else if (value >= 1000) {
+    // 1 Thousand and above
+    return (value / 1000).toFixed(2).replace(/\.00$/, "") + " K";
+  } else {
+    // less than 1000 → normal number
+    return value.toString();
+  }
+};
+
+    useEffect(() => {
+        if (maxSalary) {
+            setMaxValue(maxSalary);
+        }
+    }, [maxSalary]);
+
+    console.log("Max Salary from API:", maxSalary);
 
     const handleTypeChange = (value: string) => {
         const newValue = selectedType === value ? "" : value; // toggle behavior
@@ -33,6 +69,13 @@ const Filter = ({ onTypeChange, onCategoryChange }: FilterProps) => {
         if (onCategoryChange) {
             onCategoryChange(newValue);
         }
+    };
+    const handleSliderValue = (value: number) => {
+        setMaxValue(value);
+        if (onSalaryChange) {
+            onSalaryChange(value);
+        }
+        console.log("Slider Value:", value);
     };
 
     const jobTypes = [
@@ -62,8 +105,8 @@ const Filter = ({ onTypeChange, onCategoryChange }: FilterProps) => {
             </div>
             <div className="text-2xl font-bold text-white whitespace-nowrap mb-6">
                 Job Category
-            </div>
-            <div className="flex flex-col text-white">
+                        </div>
+                        <div className="flex flex-col text-white mb-8">
                 {jobCategories.map((cat) => (
                     <label key={cat.value} className="flex items-center cursor-pointer">
                         <input
@@ -75,6 +118,15 @@ const Filter = ({ onTypeChange, onCategoryChange }: FilterProps) => {
                         {cat.label}
                     </label>
                 ))}
+            </div>
+
+            <div>
+                 <div className="text-2xl font-bold text-white whitespace-nowrap mb-6">
+                Salary
+            </div>
+                <input type='range' min='0' max={maxSalary} value={maxValue} step='10000'  onChange={(e) => handleSliderValue(parseInt(e.target.value))} />
+
+               <div className='font-bold'>₹0 - ₹{maxValue ? rupeeFn(maxValue) : '0'}</div>
             </div>
         </div>
     );
